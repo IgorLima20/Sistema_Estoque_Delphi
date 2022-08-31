@@ -1,0 +1,259 @@
+unit U_pesq_geral_mes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
+  Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, frxClass, frxDBSet, frxExportBaseDialog, frxExportPDF;
+
+type
+  TFrm_pesq_geral_mes = class(TForm)
+    Panel1: TPanel;
+    lb_inicio: TLabel;
+    MK_Inicio: TMaskEdit;
+    MK_Fim: TMaskEdit;
+    bt_Pesquisar: TBitBtn;
+    bt_Imprimir: TBitBtn;
+    bt_Transferir: TBitBtn;
+    lb_final: TLabel;
+    rg_opcoes: TRadioGroup;
+    q_compra: TFDQuery;
+    q_venda: TFDQuery;
+    q_conta_pagar: TFDQuery;
+    q_conta_receber: TFDQuery;
+    q_conta_a_pagar: TFDQuery;
+    q_conta_a_receber: TFDQuery;
+    ds_compra: TDataSource;
+    ds_venda: TDataSource;
+    ds_conta_pagar: TDataSource;
+    ds_conta_receber: TDataSource;
+    ds_conta_a_pagar: TDataSource;
+    ds_conta_a_receber: TDataSource;
+    Rel_Geral: TfrxReport;
+    frx_compra: TfrxDBDataset;
+    frx_conta_a_receber: TfrxDBDataset;
+    frx_venda: TfrxDBDataset;
+    frx_conta_receber: TfrxDBDataset;
+    frx_conta__a_pagar: TfrxDBDataset;
+    frx_conta_pagar: TfrxDBDataset;
+    frxPDFExport1: TfrxPDFExport;
+    q_compraMES: TSmallintField;
+    q_compraANO: TSmallintField;
+    q_compraVALOR_COMPRA: TFMTBCDField;
+    q_vendaMES: TSmallintField;
+    q_vendaANO: TSmallintField;
+    q_vendaVALOR_VENDA: TFMTBCDField;
+    q_conta_pagarMES: TSmallintField;
+    q_conta_pagarANO: TSmallintField;
+    q_conta_pagarTOTAL_PAGAR: TFMTBCDField;
+    q_conta_receberMES: TSmallintField;
+    q_conta_receberANO: TSmallintField;
+    q_conta_receberTOTAL_RECEBIDO: TFMTBCDField;
+    q_conta_a_pagarMES: TSmallintField;
+    q_conta_a_pagarANO: TSmallintField;
+    q_conta_a_pagarVALOR_A_PAGAR: TFMTBCDField;
+    q_conta_a_receberMES: TSmallintField;
+    q_conta_a_receberANO: TSmallintField;
+    q_conta_a_receberVALOR_A_RECEBER: TFMTBCDField;
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure AbreImpressao();
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_pesq_geral_mes: TFrm_pesq_geral_mes;
+
+implementation
+
+{$R *.dfm}
+
+uses U_DM;
+
+procedure TFrm_pesq_geral_mes.AbreImpressao;
+var caminho : string;
+begin
+  case rg_opcoes.ItemIndex of
+  0:begin
+    caminho := ExtractFilepath(Application.ExeName);
+    if Frm_pesq_geral_mes.Rel_Geral.LoadFromFile(caminho + 'Rel_compra_venda_mes.fr3') then
+    begin
+      Rel_Geral.clear;
+      Rel_Geral.LoadFromFile(extractfilepath(application.ExeName) +  'Rel_compra_venda_mes.fr3');
+      Rel_Geral.Variables['data_inicial'] := QuotedStr(MK_Inicio.Text);
+      Rel_Geral.Variables['data_final'] := QuotedStr(MK_Fim.Text);
+      Rel_Geral.Variables['usuario'] := QuotedStr(DM.Usuario);
+      Rel_Geral.prepareReport(true);
+      Rel_Geral.ShowPreparedReport;
+    end
+    else
+      Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end;
+
+  1:begin
+    caminho := ExtractFilepath(Application.ExeName);
+    if Frm_pesq_geral_mes.Rel_Geral.LoadFromFile(caminho + 'Rel_Contas_paga_Recebidas_mes.fr3') then
+    begin
+      Rel_Geral.clear;
+      Rel_Geral.LoadFromFile(extractfilepath(application.ExeName) +  'Rel_Contas_paga_Recebidas_mes.fr3');
+      Rel_Geral.Variables['data_inicial'] := QuotedStr(MK_Inicio.Text);
+      Rel_Geral.Variables['data_final'] := QuotedStr(MK_Fim.Text);
+      Rel_Geral.Variables['usuario'] := QuotedStr(DM.Usuario);
+      Rel_Geral.prepareReport(true);
+      Rel_Geral.ShowPreparedReport;
+    end
+    else
+      Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end;
+
+  2:begin
+    caminho := ExtractFilepath(Application.ExeName);
+    if Frm_pesq_geral_mes.Rel_Geral.LoadFromFile(caminho + 'Rel_Falta_pagar_Falta_Receber_mes.fr3') then
+    begin
+      Rel_Geral.clear;
+      Rel_Geral.LoadFromFile(extractfilepath(application.ExeName) +  'Rel_Falta_pagar_Falta_Receber_mes.fr3');
+      Rel_Geral.Variables['data_inicial'] := QuotedStr(MK_Inicio.Text);
+      Rel_Geral.Variables['data_final'] := QuotedStr(MK_Fim.Text);
+      Rel_Geral.Variables['usuario'] := QuotedStr(DM.Usuario);
+      Rel_Geral.prepareReport(true);
+      Rel_Geral.ShowPreparedReport;
+    end
+    else
+      Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end;
+  end;
+end;
+
+procedure TFrm_pesq_geral_mes.bt_PesquisarClick(Sender: TObject);
+begin
+  case rg_opcoes.ItemIndex of
+  0: begin // COMPRAS E VENDAS POR MÊS
+    q_compra.Close;  //fecha
+    q_compra.SQL.Add('');   // limpa
+    q_compra.Params.Clear;  // limpamos os parametros
+    q_compra.SQL.Clear;     // limpa o sql
+    q_compra.SQL.Add('select extract(MONTH FROM A.CADASTRO) AS MES, '
+    +'extract(YEAR FROM A.CADASTRO) AS ANO, '
+    +'SUM(A.VALOR) AS VALOR_COMPRA '
+    +'FROM COMPRA A ');
+    q_compra.SQL.Add('WHERE A.CADASTRO between :pdata_ini AND :pdata_fim ');
+    q_compra.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_compra.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_compra.SQL.Add('group BY extract(MONTH FROM A.CADASTRO),  extract(YEAR FROM A.CADASTRO) ');
+    q_compra.SQL.Add('ORDER BY  extract(MONTH FROM A.CADASTRO)');
+    q_compra.Open;
+
+    q_venda.Close;  //fecha
+    q_venda.SQL.Add('');   // limpa
+    q_venda.Params.Clear;  // limpamos os parametros
+    q_venda.SQL.Clear;     // limpa o sql
+    q_venda.SQL.Add('select extract(MONTH FROM A.CADASTRO) AS MES, '
+    +'extract(YEAR FROM A.CADASTRO) AS ANO, '
+    +'SUM(A.VALOR) AS VALOR_VENDA '
+    +'FROM VENDA A ');
+    q_venda.SQL.Add('WHERE A.CADASTRO between :pdata_ini AND :pdata_fim ');
+    q_venda.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_venda.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_venda.SQL.Add('group BY extract(MONTH FROM A.CADASTRO),  extract(YEAR FROM A.CADASTRO) ');
+    q_venda.SQL.Add('ORDER BY  extract(MONTH FROM A.CADASTRO)');
+    q_venda.Open;
+  end;
+
+  1: begin // TOTAL PAGO E RECEBIDO POR MÊS
+    q_conta_pagar.Close;  //fecha
+    q_conta_pagar.SQL.Add('');   // limpa
+    q_conta_pagar.Params.Clear;  // limpamos os parametros
+    q_conta_pagar.SQL.Clear;     // limpa o sql
+    q_conta_pagar.SQL.Add('select extract(MONTH FROM A.DT_PAGAMENTO) AS MES, '
+    +'extract(YEAR FROM DT_PAGAMENTO) AS ANO, '
+    +'SUM(A.TOTAL_PAGAR) AS TOTAL_PAGAR '
+    +'FROM CONTAS_PAGAR A ');
+    q_conta_pagar.SQL.Add('WHERE DT_PAGAMENTO between :pdata_ini AND :pdata_fim ');
+    q_conta_pagar.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_conta_pagar.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_conta_pagar.SQL.Add('group BY extract(MONTH FROM DT_PAGAMENTO),  extract(YEAR FROM DT_PAGAMENTO) ');
+    q_conta_pagar.SQL.Add('ORDER BY  extract(MONTH FROM DT_PAGAMENTO)');
+    q_conta_pagar.Open;
+
+    q_conta_receber.Close;  //fecha
+    q_conta_receber.SQL.Add('');   // limpa
+    q_conta_receber.Params.Clear;  // limpamos os parametros
+    q_conta_receber.SQL.Clear;     // limpa o sql
+    q_conta_receber.SQL.Add('select extract(MONTH FROM DT_PAGAMENTO) AS MES, '
+    +'extract(YEAR FROM DT_PAGAMENTO) AS ANO, '
+    +'SUM(A.TOTAL_PAGAR) AS TOTAL_RECEBIDO '
+    +'FROM CONTAS_RECEBER A ');
+    q_conta_receber.SQL.Add('WHERE DT_PAGAMENTO between :pdata_ini AND :pdata_fim ');
+    q_conta_receber.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_conta_receber.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_conta_receber.SQL.Add('group BY extract(MONTH FROM DT_PAGAMENTO),  extract(YEAR FROM DT_PAGAMENTO) ');
+    q_conta_receber.SQL.Add('ORDER BY  extract(MONTH FROM DT_PAGAMENTO)');
+    q_conta_receber.Open;
+  end;
+
+  2: begin // TOTAL A PAGAR E A RECEBER POR MÊS
+    q_conta_a_pagar.Close;  //fecha
+    q_conta_a_pagar.SQL.Add('');   // limpa
+    q_conta_a_pagar.Params.Clear;  // limpamos os parametros
+    q_conta_a_pagar.SQL.Clear;     // limpa o sql
+    q_conta_a_pagar.SQL.Add('select extract(MONTH FROM A.DT_VENCIMENTO) AS MES, '
+    +'extract(YEAR FROM DT_VENCIMENTO) AS ANO, '
+    +'SUM(A.VALOR_PARCELA) AS VALOR_A_PAGAR '
+    +'FROM CONTAS_PAGAR A ');
+    q_conta_a_pagar.SQL.Add('WHERE DT_VENCIMENTO between :pdata_ini AND :pdata_fim ');
+    q_conta_a_pagar.SQL.Add('AND A.STATUS = ''EM ABERTO''');
+    q_conta_a_pagar.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_conta_a_pagar.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_conta_a_pagar.SQL.Add('group BY extract(MONTH FROM DT_VENCIMENTO),  extract(YEAR FROM DT_VENCIMENTO) ');
+    q_conta_a_pagar.SQL.Add('ORDER BY  extract(MONTH FROM DT_VENCIMENTO)');
+    q_conta_a_pagar.Open;
+
+    q_conta_a_receber.Close;  //fecha
+    q_conta_a_receber.SQL.Add('');   // limpa
+    q_conta_a_receber.Params.Clear;  // limpamos os parametros
+    q_conta_a_receber.SQL.Clear;     // limpa o sql
+    q_conta_a_receber.SQL.Add('select extract(MONTH FROM DT_VENCIMENTO) AS MES, '
+    +'extract(YEAR FROM DT_VENCIMENTO) AS ANO, '
+    +'SUM(A.VALOR_PARCELA) AS VALOR_A_RECEBER '
+    +'FROM CONTAS_RECEBER A ');
+    q_conta_a_receber.SQL.Add('WHERE DT_VENCIMENTO between :pdata_ini AND :pdata_fim ');
+    q_conta_a_receber.SQL.Add('AND A.STATUS = ''EM ABERTO''');
+    q_conta_a_receber.ParamByName('pdata_ini').AsDate := StrToDate(MK_Inicio.Text);
+    q_conta_a_receber.ParamByName('pdata_fim').AsDate := StrToDate(MK_Fim.Text);
+    q_conta_a_receber.SQL.Add('group BY extract(MONTH FROM DT_VENCIMENTO),  extract(YEAR FROM DT_VENCIMENTO) ');
+    q_conta_a_receber.SQL.Add('ORDER BY  extract(MONTH FROM DT_VENCIMENTO)');
+    q_conta_a_receber.Open;
+  end;
+  end;
+  AbreImpressao;
+end;
+
+procedure TFrm_pesq_geral_mes.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  q_compra.Close;
+  q_venda.Close;
+  q_conta_pagar.Close;
+  q_conta_receber.Close;
+  q_conta_a_pagar.Close;
+  q_conta_a_receber.Close;
+end;
+
+procedure TFrm_pesq_geral_mes.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key=#13 then
+  begin
+    Key:=#0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+end;
+
+end.

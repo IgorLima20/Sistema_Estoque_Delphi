@@ -1,0 +1,11 @@
+inherited Frm_Restore: TFrm_Restore
+  Caption = 'Frm_Restore'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel1: TPanel
+    inherited bt_backup: TBitBtn
+      Caption = '&Restore'
+      OnClick = bt_backupClick
+    end
+  end
+end

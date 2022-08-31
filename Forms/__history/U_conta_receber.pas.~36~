@@ -1,0 +1,174 @@
+unit U_conta_receber;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_padrao, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.DBCtrls, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, frxClass, frxDBSet;
+
+type
+  TFrm_conta_receber = class(TFrm_Padrao)
+    Q_padraoID_VENDA: TIntegerField;
+    Q_padraoID_CLIENTE: TIntegerField;
+    Q_padraoNOME: TStringField;
+    Q_padraoCPF: TStringField;
+    DBEdit10: TDBEdit;
+    DBEdit11: TDBEdit;
+    DBEdit12: TDBEdit;
+    DBEdit13: TDBEdit;
+    DBEdit5: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    DBEdit8: TDBEdit;
+    DBEdit9: TDBEdit;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Bevel2: TBevel;
+    q_receber: TFDQuery;
+    ds_receber: TDataSource;
+    q_receberID_SEQUENCIA: TIntegerField;
+    q_receberID_VENDA: TIntegerField;
+    q_receberVALOR_PARCELA: TFMTBCDField;
+    q_receberDT_VENCIMENTO: TDateField;
+    q_receberDT_PAGAMENTO: TDateField;
+    q_receberATRASO: TIntegerField;
+    q_receberJUROS: TFMTBCDField;
+    q_receberVL_JUROS: TFMTBCDField;
+    q_receberTOTAL_PAGAR: TFMTBCDField;
+    q_receberSTATUS: TStringField;
+    bt_Imprimir: TBitBtn;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Bevel1: TBevel;
+    Rel_recibo: TfrxReport;
+    frx_padrao: TfrxDBDataset;
+    frx_receber: TfrxDBDataset;
+    frx_empresa: TfrxDBDataset;
+    q_empresa: TFDQuery;
+    ds_empresa: TDataSource;
+    q_empresaID_EMPRESA: TIntegerField;
+    q_empresaRAZAO_SOCIAL: TStringField;
+    q_empresaN_FANTASIA: TStringField;
+    q_empresaENDERECO: TStringField;
+    q_empresaNUMERO: TIntegerField;
+    q_empresaBAIRRO: TStringField;
+    q_empresaCIDADE: TStringField;
+    q_empresaUF: TStringField;
+    q_empresaCEP: TStringField;
+    q_empresaTELEFONE: TStringField;
+    q_empresaCNPJ: TStringField;
+    q_empresaEMAIL: TStringField;
+    q_empresaLOGO: TBlobField;
+    q_empresaCADASTRO: TDateField;
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure bt_EditarClick(Sender: TObject);
+    procedure bt_AtualizarClick(Sender: TObject);
+    procedure DBEdit8Exit(Sender: TObject);
+    procedure DBEdit10Exit(Sender: TObject);
+    procedure bt_ImprimirClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_conta_receber: TFrm_conta_receber;
+
+implementation
+
+{$R *.dfm}
+
+uses U_DM, U_pesq_contas_receber, System.DateUtils;
+
+procedure TFrm_conta_receber.bt_AtualizarClick(Sender: TObject);
+begin
+  q_receber.Post;
+  inherited;
+end;
+
+procedure TFrm_conta_receber.bt_EditarClick(Sender: TObject);
+begin
+  q_receber.Edit;
+  DBEdit8.SetFocus;
+  inherited;
+end;
+
+procedure TFrm_conta_receber.bt_ImprimirClick(Sender: TObject);
+var caminho : string;
+begin
+  caminho := ExtractFilepath(Application.ExeName);
+  if Frm_conta_receber.Rel_recibo.LoadFromFile(caminho + 'Rel__Recibo_Pagamento.fr3') then
+  begin
+    Rel_recibo.clear;
+    Rel_recibo.LoadFromFile(extractfilepath(application.ExeName) +  'Rel__Recibo_Pagamento.fr3');
+    Rel_recibo.prepareReport(true);
+    Rel_recibo.ShowPreparedReport;
+  end
+  else
+    Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TFrm_conta_receber.bt_PesquisarClick(Sender: TObject);
+begin
+  Frm_Pesq_contas_receber := TFrm_Pesq_contas_receber.Create(Self);
+  Frm_Pesq_contas_receber.ShowModal;
+  try
+    if Frm_Pesq_contas_receber.codigo > 0 then
+    begin
+      Q_padrao.Open;
+      q_receber.Open;
+      Q_padrao.Locate('ID_VENDA', Frm_Pesq_contas_receber.codigo, []);
+      q_receber.Locate('DT_VENCIMENTO', Frm_Pesq_contas_receber.data, []);
+      q_receber.Locate('ID_SEQUENCIA', Frm_Pesq_contas_receber.sequencia, []);
+    end;
+  finally
+    Frm_Pesq_contas_receber.Free;
+    Frm_Pesq_contas_receber := nil;
+  end;
+end;
+
+procedure TFrm_conta_receber.DBEdit10Exit(Sender: TObject);
+begin
+  //Valida os dias em atraso
+  if q_receberATRASO.AsInteger > 0 then
+  begin
+    q_receberVL_JUROS.AsFloat := (
+    q_receberATRASO.AsInteger * q_receberJUROS.AsFloat * q_receberVALOR_PARCELA.AsFloat/100);
+    //Insere o valor total a pagar
+    q_receberTOTAL_PAGAR.AsFloat := q_receberVL_JUROS.AsFloat + q_receberVALOR_PARCELA.AsFloat;
+    q_receberSTATUS.AsString := 'RECEBIDO';
+  end
+end;
+
+procedure TFrm_conta_receber.DBEdit8Exit(Sender: TObject);
+begin
+  if q_receberDT_PAGAMENTO.AsDateTime > q_receberDT_VENCIMENTO.AsDateTime then
+  begin
+    q_receberATRASO.Value := Daysbetween(q_receberDT_PAGAMENTO.AsDateTime, q_receberDT_VENCIMENTO.AsDateTime);
+    DBEdit10.SetFocus;
+  end
+  else
+  q_receberATRASO.AsInteger := 0;
+  q_receberSTATUS.AsString := 'RECEBIDO';
+  q_receberTOTAL_PAGAR.AsFloat := q_receberVALOR_PARCELA.AsFloat;
+end;
+
+end.

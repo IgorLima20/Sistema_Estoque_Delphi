@@ -1,0 +1,103 @@
+unit U_pes_usuarios;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_form_pesquisa_padrao, Data.DB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ExtCtrls,
+  frxClass, frxDBSet;
+
+type
+  TFrm_Pesq_Usuarios = class(TFrm_Pesquisa_Padrao)
+    Q_pesq_padraoID_USUARIO: TIntegerField;
+    Q_pesq_padraoNOME: TStringField;
+    Q_pesq_padraoTIPO: TStringField;
+    Q_pesq_padraoCADASTRO: TDateField;
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure bt_TransferirClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure bt_ImprimirClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_Pesq_Usuarios: TFrm_Pesq_Usuarios;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrm_Pesq_Usuarios.bt_ImprimirClick(Sender: TObject);
+var caminho : string;
+begin
+  caminho := ExtractFilepath(Application.ExeName);
+  if Frm_Pesq_Usuarios.Rel_Pes_Padrao.LoadFromFile(caminho + 'REL_USUARIO.fr3') then
+
+end;
+
+procedure TFrm_Pesq_Usuarios.bt_PesquisarClick(Sender: TObject);
+begin
+  Q_pesq_padrao.Close;  //fecha
+  Q_pesq_padrao.SQL.Add('');   // limpa
+  Q_pesq_padrao.Params.Clear;  // limpamos os parametros
+  Q_pesq_padrao.SQL.Clear;     // limpa o sql
+  Q_pesq_padrao.SQL.Add('SELECT ID_USUARIO, NOME, TIPO, CADASTRO FROM USUARIO');
+
+  case cb_chave_pesquisa.ItemIndex of
+    0:begin
+      Q_pesq_padrao.SQL.Add('WHERE ID_USUARIO = :PID_USUARIO');
+      Q_pesq_padrao.ParamByName('PID_USUARIO').AsString := ED_Nome.Text;
+    end;
+
+    1:begin
+      Q_pesq_padrao.SQL.Add('WHERE NOME LIKE :PNOME');
+      Q_pesq_padrao.ParamByName('PNOME').AsString :=  '%' + ED_Nome.Text + '%';
+    end;
+
+    2:begin
+      Q_pesq_padrao.SQL.Add('WHERE CADASTRO = :PCADASTRO');
+      Q_pesq_padrao.ParamByName('PCADASTRO').AsDate := StrToDate(MK_Inicio.Text);
+    end;
+
+    3:begin
+      Q_pesq_padrao.SQL.Add('WHERE CADASTRO BETWEEN :PINICIO  AND :PFIM');
+      Q_pesq_padrao.ParamByName('PINICIO').AsDate := StrToDate(MK_Inicio.Text);
+      Q_pesq_padrao.ParamByName('PFIM').AsDate := StrToDate(MK_Fim.Text);
+    end;
+
+    4:begin
+      Q_pesq_padrao.SQL.Add('ORDER BY ID_USUARIO');
+    end;
+  end;
+  Q_pesq_padrao.Open;
+  if Q_pesq_padrao.IsEmpty then
+  begin
+    Application.MessageBox('Registro não encontrado', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end
+  else
+    abort;
+end;
+
+procedure TFrm_Pesq_Usuarios.bt_TransferirClick(Sender: TObject);
+begin
+  if Q_pesq_padrao.RecordCount > 0 then
+  begin
+    codigo := Q_pesq_padraoID_USUARIO.AsInteger;
+  end
+  else
+    Abort;
+end;
+
+procedure TFrm_Pesq_Usuarios.DBGrid1DblClick(Sender: TObject);
+begin
+  bt_Transferir.Click;
+end;
+
+end.

@@ -1,0 +1,114 @@
+unit U_pes_fornecedores;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_form_pesquisa_padrao, Data.DB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ExtCtrls,
+  frxClass, frxDBSet, frxExportBaseDialog, frxExportPDF, Vcl.DBCtrls;
+
+type
+  TFrm_Pesq_Fornecedores = class(TFrm_Pesquisa_Padrao)
+    Q_pesq_padraoID_FORNECEDOR: TIntegerField;
+    Q_pesq_padraoNOME: TStringField;
+    Q_pesq_padraoENDERECO: TStringField;
+    Q_pesq_padraoNUMERO: TIntegerField;
+    Q_pesq_padraoBAIRRO: TStringField;
+    Q_pesq_padraoCIDADE: TStringField;
+    Q_pesq_padraoUF: TStringField;
+    Q_pesq_padraoCEP: TStringField;
+    Q_pesq_padraoTELEFONE: TStringField;
+    Q_pesq_padraoCNPJ: TStringField;
+    Q_pesq_padraoEMAIL: TStringField;
+    Q_pesq_padraoCADASTRO: TDateField;
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure bt_TransferirClick(Sender: TObject);
+    procedure bt_ImprimirClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_Pesq_Fornecedores: TFrm_Pesq_Fornecedores;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrm_Pesq_Fornecedores.bt_ImprimirClick(Sender: TObject);
+var caminho : string;
+begin
+  caminho := ExtractFilepath(Application.ExeName);
+  if Frm_Pesq_Fornecedores.Rel_Pesq_Padrao.LoadFromFile(caminho + 'REL_FORNECEDORES.fr3') then
+  begin
+    Rel_Pesq_Padrao.clear;
+    Rel_Pesq_Padrao.LoadFromFile(extractfilepath(application.ExeName) +  'REL_FORNECEDORES.fr3');
+    Rel_Pesq_Padrao.prepareReport(true);
+    Rel_Pesq_Padrao.ShowPreparedReport;
+  end
+  else
+    Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TFrm_Pesq_Fornecedores.bt_PesquisarClick(Sender: TObject);
+begin
+  Q_pesq_padrao.Close;  //fecha
+  Q_pesq_padrao.SQL.Add('');   // limpa
+  Q_pesq_padrao.Params.Clear;  // limpamos os parametros
+  Q_pesq_padrao.SQL.Clear;     // limpa o sql
+  Q_pesq_padrao.SQL.Add('SELECT * FROM FORNECEDOR');
+
+  case cb_chave_pesquisa.ItemIndex of
+    0:begin
+      Q_pesq_padrao.SQL.Add('WHERE ID_FORNECEDOR = :PID_FORNECEDOR');
+      Q_pesq_padrao.ParamByName('PID_FORNECEDOR').AsString := ED_Nome.Text;
+    end;
+
+    1:begin
+      Q_pesq_padrao.SQL.Add('WHERE NOME LIKE :PNOME');
+      Q_pesq_padrao.ParamByName('PNOME').AsString :=  '%' + ED_Nome.Text + '%';
+    end;
+
+    2:begin
+      Q_pesq_padrao.SQL.Add('WHERE CADASTRO = :PCADASTRO');
+      Q_pesq_padrao.ParamByName('PCADASTRO').AsDate := StrToDate(MK_Inicio.Text);
+    end;
+
+    3:begin
+      Q_pesq_padrao.SQL.Add('WHERE CADASTRO BETWEEN :PINICIO  AND :PFIM');
+      Q_pesq_padrao.ParamByName('PINICIO').AsDate := StrToDate(MK_Inicio.Text);
+      Q_pesq_padrao.ParamByName('PFIM').AsDate := StrToDate(MK_Fim.Text);
+    end;
+
+    4:begin
+      Q_pesq_padrao.SQL.Add('ORDER BY ID_FORNECEDOR');
+    end;
+  end;
+  Q_pesq_padrao.Open;
+  // Mostra quantidade de registros
+  lb_resultado.Caption := IntToStr(Q_pesq_padrao.RecordCount);
+  if Q_pesq_padrao.IsEmpty then
+  begin
+    Application.MessageBox('Registro não encontrado', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end
+  else
+    abort;
+end;
+
+procedure TFrm_Pesq_Fornecedores.bt_TransferirClick(Sender: TObject);
+begin
+  if Q_pesq_padrao.RecordCount > 0 then
+  begin
+    codigo := Q_pesq_padraoID_FORNECEDOR.AsInteger;
+  end
+  else
+    Abort;
+end;
+
+end.

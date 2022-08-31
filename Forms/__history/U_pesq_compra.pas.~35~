@@ -1,0 +1,224 @@
+unit U_pesq_compra;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_form_pesquisa_padrao, Data.DB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, frxClass, frxExportBaseDialog, frxExportPDF,
+  frxDBSet, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls;
+
+type
+  TFrm_pesq_compra = class(TFrm_Pesquisa_Padrao)
+    Q_pesq_padraoID_COMPRA: TIntegerField;
+    Q_pesq_padraoID_FORNECEDOR: TIntegerField;
+    Q_pesq_padraoNOME: TStringField;
+    Q_pesq_padraoID_FORMA_PGTO: TIntegerField;
+    Q_pesq_padraoDESCRICAO: TStringField;
+    Q_pesq_padraoUSUARIO: TStringField;
+    Q_pesq_padraoCADASTRO: TDateField;
+    Q_pesq_padraoVALOR: TFMTBCDField;
+    Label3: TLabel;
+    lb_valor_compra: TLabel;
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure cb_chave_pesquisaChange(Sender: TObject);
+    procedure bt_TransferirClick(Sender: TObject);
+    procedure bt_ImprimirClick(Sender: TObject);
+    procedure SomaCompra();
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_pesq_compra: TFrm_pesq_compra;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrm_pesq_compra.bt_ImprimirClick(Sender: TObject);
+var caminho : string;
+begin
+  caminho := ExtractFilepath(Application.ExeName);
+  if Frm_pesq_compra.Rel_Pesq_Padrao.LoadFromFile(caminho + 'REL_COMPRA.fr3') then
+  begin
+    Rel_Pesq_Padrao.clear;
+    Rel_Pesq_Padrao.LoadFromFile(extractfilepath(application.ExeName) +  'REL_COMPRA.fr3');
+    Rel_Pesq_Padrao.prepareReport(true);
+    Rel_Pesq_Padrao.ShowPreparedReport;
+  end
+  else
+    Application.MessageBox('Relatório não encontrando!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TFrm_pesq_compra.bt_PesquisarClick(Sender: TObject);
+begin
+  Q_pesq_padrao.Close;  //fecha
+  Q_pesq_padrao.SQL.Add('');   // limpa
+  Q_pesq_padrao.Params.Clear;  // limpamos os parametros
+  Q_pesq_padrao.SQL.Clear;     // limpa o sql
+  Q_pesq_padrao.SQL.Add('SELECT A.ID_COMPRA,'
+	  +  'A.ID_FORNECEDOR,'
+    +  'B.NOME,'
+	  +  'A.ID_FORMA_PGTO,'
+    +  'C.DESCRICAO,'
+    +  'A.USUARIO,'
+	  +  'A.VALOR,'
+	  +  'A.CADASTRO '
+	  +  'FROM COMPRA A '
+	  +  'INNER JOIN FORNECEDOR B ON B.ID_FORNECEDOR = A.ID_FORNECEDOR '
+    +  'INNER JOIN FORMA_PGTO C ON C.ID_FORMA_PGTO = A.ID_FORMA_PGTO ');
+
+  case cb_chave_pesquisa.ItemIndex of
+    0:begin
+      Q_pesq_padrao.SQL.Add('WHERE A.ID_COMPRA = :PID_COMPRA');
+      Q_pesq_padrao.ParamByName('PID_COMPRA').AsString := ED_Nome.Text;
+    end;
+
+    1:begin
+      Q_pesq_padrao.SQL.Add('WHERE A.USUARIO LIKE :PUSUARIO');
+      Q_pesq_padrao.ParamByName('PUSUARIO').AsString :=  '%' + ED_Nome.Text + '%';
+    end;
+
+     2:begin
+       Q_pesq_padrao.SQL.Add('WHERE A.ID_FORNECEDOR = :PID_FORNECEDOR');
+      Q_pesq_padrao.ParamByName('PID_FORNECEDOR').AsString := ED_Nome.Text;
+    end;
+     3:begin
+      Q_pesq_padrao.SQL.Add('WHERE A.ID_FORMA_PGTO = :PID_FORMA_PGTO');
+      Q_pesq_padrao.ParamByName('PID_FORMA_PGTO').AsString := ED_Nome.Text;
+    end;
+
+    4:begin
+      Q_pesq_padrao.SQL.Add('WHERE A.CADASTRO = :PCADASTRO');
+      Q_pesq_padrao.ParamByName('PCADASTRO').AsDate := StrToDate(MK_Inicio.Text);
+    end;
+
+    5:begin
+      Q_pesq_padrao.SQL.Add('WHERE A.CADASTRO BETWEEN :PINICIO  AND :PFIM');
+      Q_pesq_padrao.ParamByName('PINICIO').AsDate := StrToDate(MK_Inicio.Text);
+      Q_pesq_padrao.ParamByName('PFIM').AsDate := StrToDate(MK_Fim.Text);
+    end;
+
+    6:begin
+      Q_pesq_padrao.SQL.Add('ORDER BY A.ID_COMPRA');
+    end;
+  end;
+  Q_pesq_padrao.Open;
+  // Mostra quantidade de registros
+  lb_resultado.Caption := IntToStr(Q_pesq_padrao.RecordCount);
+
+
+
+  if Q_pesq_padrao.IsEmpty then
+  begin
+    Application.MessageBox('Registro não encontrado', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end
+  else
+    abort;
+end;
+
+procedure TFrm_pesq_compra.bt_TransferirClick(Sender: TObject);
+begin
+  if Q_pesq_padrao.RecordCount > 0 then
+  begin
+    codigo := Q_pesq_padraoID_COMPRA.AsInteger;
+  end
+  else
+    Abort;
+end;
+
+procedure TFrm_pesq_compra.cb_chave_pesquisaChange(Sender: TObject);
+begin
+  case cb_chave_pesquisa.ItemIndex of
+    0:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Código:';
+      ED_Nome.Clear;
+    end;
+    1:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Nome do Usuário:';
+      ED_Nome.Clear;
+    end;
+    2:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Código do Fornecedor:';
+      ED_Nome.Clear;
+    end;
+    3:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Código da Forma de Pgto:';
+      ED_Nome.Clear;
+    end;
+    4:begin
+      ED_Nome.Visible := false;
+      MK_Inicio.Visible := true;
+      MK_Inicio.SetFocus;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := false;
+      lb_inicio.Visible := true;
+      lb_inicio.Caption := 'Digite a data:';
+      ED_Nome.Clear;
+    end;
+    5:begin
+      ED_Nome.Visible := false;
+      MK_Inicio.Visible := true;
+      MK_Inicio.SetFocus;
+      MK_Fim.Visible := true;
+      lb_texto.Visible := false;
+      lb_inicio.Visible := true;
+      lb_inicio.Caption := 'Digite o Período:';
+      ED_Nome.Clear;
+    end;
+     6:begin
+      ED_Nome.Visible := false;
+      MK_Inicio.Visible := false;
+      MK_Fim.Visible := false;
+      lb_texto.Visible := false;
+      lb_inicio.Visible := false;
+    end;
+  end;
+
+end;
+
+procedure TFrm_pesq_compra.SomaCompra;
+var soma: Currency;
+begin
+  //soma a quantidade de compras
+  Q_pesq_padrao.First;
+  while not Q_pesq_padrao.Eof do
+  begin
+    soma := soma + Q_pesq_padraoVALOR.AsCurrency;
+    Q_pesq_padrao.Next;
+  end;
+
+
+end;
+
+end.

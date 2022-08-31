@@ -1,0 +1,8 @@
+inherited Frm_backup: TFrm_backup
+  Caption = 'BACKUP DO BANCO DE DADOS'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited backup: TFDIBBackup
+    DriverLink = DM.FDPhysFBDriverLink1
+  end
+end

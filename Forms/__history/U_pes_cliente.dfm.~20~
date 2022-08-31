@@ -1,0 +1,82 @@
+inherited Frm_Pesq_Cliente: TFrm_Pesq_Cliente
+  Caption = 'PESQUISA DE CLIENTES'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel1: TPanel
+    inherited bt_Pesquisar: TBitBtn
+      OnClick = bt_PesquisarClick
+    end
+    inherited bt_Transferir: TBitBtn
+      OnClick = bt_TransferirClick
+    end
+  end
+  inherited DBGrid1: TDBGrid
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID_CLIENTE'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NOME'
+        Width = 280
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ENDERECO'
+        Title.Caption = 'ENDERE'#199'O'
+        Width = 280
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NUMERO'
+        Title.Caption = 'N'#218'MERO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'BAIRRO'
+        Width = 280
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CIDADE'
+        Width = 280
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'UF'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CEP'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TELEFONE'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CPF'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'CADASTRO'
+        Visible = True
+      end>
+  end
+  inherited Q_pesq_padrao: TFDQuery
+    SQL.Strings = (
+      'select * from cliente order by ID_CLIENTE')
+    Left = 576
+  end
+end

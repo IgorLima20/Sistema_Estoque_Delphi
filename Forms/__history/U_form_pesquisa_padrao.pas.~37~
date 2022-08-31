@@ -1,0 +1,136 @@
+unit U_form_pesquisa_padrao;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.Buttons, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+
+type
+  TFrm_Pesquisa_Padrao = class(TForm)
+    Panel1: TPanel;
+    cb_chave_pesquisa: TComboBox;
+    Label1: TLabel;
+    ED_Nome: TEdit;
+    MK_Inicio: TMaskEdit;
+    MK_Fim: TMaskEdit;
+    lb_texto: TLabel;
+    lb_inicio: TLabel;
+    DBGrid1: TDBGrid;
+    Panel2: TPanel;
+    bt_Pesquisar: TBitBtn;
+    bt_Imprimir: TBitBtn;
+    bt_Transferir: TBitBtn;
+    ds_pesq_padrao: TDataSource;
+    Q_pesq_padrao: TFDQuery;
+    procedure cb_chave_pesquisaChange(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    codigo : integer;
+  end;
+
+var
+  Frm_Pesquisa_Padrao: TFrm_Pesquisa_Padrao;
+
+implementation
+
+{$R *.dfm}
+
+uses U_DM;
+
+procedure TFrm_Pesquisa_Padrao.cb_chave_pesquisaChange(Sender: TObject);
+begin
+  case cb_chave_pesquisa.ItemIndex of
+    0:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Código:';
+      ED_Nome.Clear;
+    end;
+
+    1:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Nome:';
+      ED_Nome.Clear;
+    end;
+
+    2:begin
+      ED_Nome.Visible := False;
+      MK_Inicio.Visible := True;
+      MK_Inicio.SetFocus;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := False;
+      lb_inicio.Visible := True;
+      lb_inicio.Caption := 'Digite o Data:';
+      MK_Inicio.Clear;
+    end;
+
+    3:begin
+      ED_Nome.Visible := False;
+      MK_Inicio.Visible := True;
+      MK_Fim.Visible := True;
+      MK_Inicio.SetFocus;
+      lb_texto.Visible := False;
+      lb_inicio.Visible := True;
+      lb_inicio.Caption := 'Digite o Período:';
+      MK_Inicio.Clear;
+      MK_Fim.Clear;
+    end;
+
+    4:begin
+      ED_Nome.Visible := False;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := False;
+      lb_inicio.Visible := True;
+      lb_inicio.Caption := 'Monstrando todos os Registros!';
+    end;
+
+    5:begin
+      ED_Nome.Visible := True;
+      ED_Nome.SetFocus;
+      MK_Inicio.Visible := False;
+      MK_Fim.Visible := False;
+      lb_texto.Visible := true;
+      lb_inicio.Visible := false;
+      lb_texto.Caption := 'Digite o Código do Fornecedor:';
+      ED_Nome.Clear;
+    end;
+
+  end;
+end;
+
+procedure TFrm_Pesquisa_Padrao.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Q_pesq_padrao.Close;
+end;
+
+procedure TFrm_Pesquisa_Padrao.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key=#13 then
+  begin
+    Key:=#0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+
+end;
+
+end.

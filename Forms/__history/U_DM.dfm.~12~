@@ -1,0 +1,42 @@
+object DM: TDM
+  OldCreateOrder = False
+  Height = 295
+  Width = 476
+  object Conexao: TFDConnection
+    Params.Strings = (
+      'Database=D:\Curso\Projetos\Estoque\EXE\BANCO\ESTOQUE.FDB'
+      'User_Name=SYSDBA'
+      'Password=123456'
+      'Protocol=TCPIP'
+      'Server=localhost'
+      'Port=3050'
+      'CharacterSet=WIN1252'
+      'DriverID=FB')
+    Connected = True
+    LoginPrompt = False
+    Left = 80
+    Top = 112
+  end
+  object Transacao: TFDTransaction
+    Connection = Conexao
+    Left = 160
+    Top = 112
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    Left = 256
+    Top = 112
+  end
+  object fdqry1: TFDQuery
+    Connection = Conexao
+    SQL.Strings = (
+      
+        'SELECT ID_USUARIO, NOME, SENHA, TIPO FROM USUARIO ORDER BY ID_US' +
+        'UARIO')
+    Left = 72
+    Top = 200
+  end
+  object Ds_Login: TDataSource
+    Left = 160
+    Top = 200
+  end
+end

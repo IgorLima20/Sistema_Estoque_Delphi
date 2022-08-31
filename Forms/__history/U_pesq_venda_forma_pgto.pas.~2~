@@ -1,0 +1,33 @@
+unit U_pesq_venda_forma_pgto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_form_pesquisa_padrao, Data.DB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, frxClass, frxExportBaseDialog, frxExportPDF,
+  frxDBSet, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.DBCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ExtCtrls;
+
+type
+  TFrm_pesq_venda_forma_pgto = class(TFrm_Pesquisa_Padrao)
+    Q_pesq_padraoQTDE_VENDA: TLargeintField;
+    Q_pesq_padraoVALOR_VENDA: TFMTBCDField;
+    Q_pesq_padraoID_FORMA_PGTO: TIntegerField;
+    Q_pesq_padraoDESCRICAO: TStringField;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_pesq_venda_forma_pgto: TFrm_pesq_venda_forma_pgto;
+
+implementation
+
+{$R *.dfm}
+
+end.

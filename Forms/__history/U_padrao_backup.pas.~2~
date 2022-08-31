@@ -1,0 +1,24 @@
+unit U_padrao_backup;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+
+type
+  TFrm_padrao_backup = class(TForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_padrao_backup: TFrm_padrao_backup;
+
+implementation
+
+{$R *.dfm}
+
+end.

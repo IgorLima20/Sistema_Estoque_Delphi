@@ -1,0 +1,51 @@
+program Controle_Estoque;
+
+uses
+  Vcl.Forms,
+  U_Principal in '..\Forms\U_Principal.pas' {Frm_Principal},
+  U_DM in '..\Forms\U_DM.pas' {DM: TDataModule},
+  U_padrao in '..\Forms\U_padrao.pas' {Frm_Padrao},
+  U_usuario in '..\Forms\U_usuario.pas' {Frm_usuarios},
+  U_empresa in '..\Forms\U_empresa.pas' {Frm_Empresa},
+  U_cliente in '..\Forms\U_cliente.pas' {Frm_Cliente},
+  U_Fornecedor in '..\Forms\U_Fornecedor.pas' {Frm_Fornecedor},
+  U_produto in '..\Forms\U_produto.pas' {Frm_Produto},
+  U_forma_pagto in '..\Forms\U_forma_pagto.pas' {Frm_Forma_Pagto},
+  U_form_pesquisa_padrao in '..\Forms\U_form_pesquisa_padrao.pas' {Frm_Pesquisa_Padrao},
+  U_pes_usuarios in '..\Forms\U_pes_usuarios.pas' {Frm_Pesq_Usuarios},
+  U_pes_cliente in '..\Forms\U_pes_cliente.pas' {Frm_Pesq_Cliente},
+  U_pes_fornecedores in '..\Forms\U_pes_fornecedores.pas' {Frm_Pesq_Fornecedores},
+  U_pes_produtos in '..\Forms\U_pes_produtos.pas' {Frm_Pesq_Produto},
+  U_movimento_padrao in '..\Forms\U_movimento_padrao.pas' {Frm_Padrao_Movimento},
+  U_compra01 in '..\Forms\U_compra01.pas' {Frm_Compras01},
+  U_pesq_compra in '..\Forms\U_pesq_compra.pas' {Frm_pesq_compra},
+  U_login in '..\Forms\U_login.pas' {Frm_Login},
+  U_troca_senha in '..\Forms\U_troca_senha.pas' {Frm_Troca_Senha},
+  U_venda in '..\Forms\U_venda.pas' {Frm_venda},
+  U_pesq_venda in '..\Forms\U_pesq_venda.pas' {Frm_Pesq_Venda},
+  U_Recibemento_Venda in '..\Forms\U_Recibemento_Venda.pas' {Frm_Recibemento_Venda},
+  U_pesq_compra_forma_pgto in '..\Forms\U_pesq_compra_forma_pgto.pas' {Frm_pesq_compra_forrma_pgto},
+  U_pesq_venda_forma_pgto in '..\Forms\U_pesq_venda_forma_pgto.pas' {Frm_pesq_venda_forma_pgto},
+  U_pesq_geral_mes in '..\Forms\U_pesq_geral_mes.pas' {Frm_pesq_geral_mes},
+  U_contas_pagar in '..\Forms\U_contas_pagar.pas' {Frm_contas_pagar},
+  U_pesq_parcela_pagar in '..\Forms\U_pesq_parcela_pagar.pas' {Frm_pesq_parcela_pagar},
+  U_conta_receber in '..\Forms\U_conta_receber.pas' {Frm_conta_receber},
+  U_pesq_contas_receber in '..\Forms\U_pesq_contas_receber.pas' {Frm_Pesq_contas_receber},
+  U_movimenta_preco in '..\Forms\U_movimenta_preco.pas' {Frm_movimenta_preco},
+  U_padrao_backup in '..\Forms\U_padrao_backup.pas' {Frm_padrao_backup},
+  U_backup in '..\Forms\U_backup.pas' {Frm_padrao_backup1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDM, DM);
+  Application.CreateForm(TFrm_Login, Frm_Login);
+  Application.CreateForm(TFrm_conta_receber, Frm_conta_receber);
+  Application.CreateForm(TFrm_Pesq_contas_receber, Frm_Pesq_contas_receber);
+  Application.CreateForm(TFrm_movimenta_preco, Frm_movimenta_preco);
+  Application.CreateForm(TFrm_padrao_backup, Frm_padrao_backup);
+  Application.CreateForm(TFrm_padrao_backup1, Frm_padrao_backup1);
+  Application.Run;
+end.

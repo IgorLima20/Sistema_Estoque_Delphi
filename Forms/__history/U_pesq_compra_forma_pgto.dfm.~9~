@@ -1,0 +1,85 @@
+inherited Frm_pesq_compra_forrma_pgto: TFrm_pesq_compra_forrma_pgto
+  Caption = 'PESQUISA POR FORMA DE PAGAMENTO'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel1: TPanel
+    inherited bt_Pesquisar: TBitBtn
+      OnClick = bt_PesquisarClick
+    end
+    inherited bt_Transferir: TBitBtn
+      Visible = False
+    end
+  end
+  inherited DBGrid1: TDBGrid
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'QTDE_COMPRA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VALOR_COMPRA'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ID_FORMA_PGTO'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DESCRICAO'
+        Visible = True
+      end>
+  end
+  inherited Panel2: TPanel
+    inherited DBNavigator1: TDBNavigator
+      Hints.Strings = ()
+    end
+  end
+  inherited Q_pesq_padrao: TFDQuery
+    SQL.Strings = (
+      
+        'select count(A.id_compra)as qtde_compra, sum(A.valor)as valor_co' +
+        'mpra, A.id_forma_pgto,b.descricao'
+      'from compra A'
+      'inner join FORMA_PGTO b on b.ID_FORMA_PGTO=a.ID_FORMA_PGTO'
+      'group by A.id_forma_pgto,b.DESCRICAO'
+      'order by A.id_forma_pgto, b.DESCRICAO')
+    object Q_pesq_padraoQTDE_COMPRA: TLargeintField
+      AutoGenerateValue = arDefault
+      FieldName = 'QTDE_COMPRA'
+      Origin = 'QTDE_COMPRA'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object Q_pesq_padraoVALOR_COMPRA: TFMTBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'VALOR_COMPRA'
+      Origin = 'VALOR_COMPRA'
+      ProviderFlags = []
+      ReadOnly = True
+      Precision = 18
+      Size = 2
+    end
+    object Q_pesq_padraoID_FORMA_PGTO: TIntegerField
+      FieldName = 'ID_FORMA_PGTO'
+      Origin = 'ID_FORMA_PGTO'
+      Required = True
+    end
+    object Q_pesq_padraoDESCRICAO: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'DESCRICAO'
+      Origin = 'DESCRICAO'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 100
+    end
+  end
+  inherited Rel_Pesq_Padrao: TfrxReport
+    Datasets = <>
+    Variables = <>
+    Style = <>
+  end
+end

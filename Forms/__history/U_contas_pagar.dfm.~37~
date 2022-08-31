@@ -1,0 +1,374 @@
+inherited Frm_contas_pagar: TFrm_contas_pagar
+  Caption = 'PAGAMENTOS DE CONTA'
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel [0]
+    Left = 88
+    Top = 88
+    Width = 68
+    Height = 13
+    Caption = 'ID_COMPRA'
+    FocusControl = DBEdit1
+  end
+  object Label2: TLabel [1]
+    Left = 88
+    Top = 134
+    Width = 92
+    Height = 13
+    Caption = 'ID_FORNECEDOR'
+    FocusControl = DBEdit2
+  end
+  object Label3: TLabel [2]
+    Left = 215
+    Top = 134
+    Width = 31
+    Height = 13
+    Caption = 'NOME'
+    FocusControl = DBEdit3
+  end
+  object Label4: TLabel [3]
+    Left = 590
+    Top = 134
+    Width = 27
+    Height = 13
+    Caption = 'CNPJ'
+    FocusControl = DBEdit4
+  end
+  object Label5: TLabel [4]
+    Left = 88
+    Top = 217
+    Width = 82
+    Height = 13
+    Caption = 'ID_SEQUENCIA'
+    FocusControl = DBEdit5
+  end
+  object Label6: TLabel [5]
+    Left = 215
+    Top = 217
+    Width = 94
+    Height = 13
+    Caption = 'VALOR_PARCELA'
+    FocusControl = DBEdit6
+  end
+  object Label7: TLabel [6]
+    Left = 353
+    Top = 217
+    Width = 70
+    Height = 13
+    Caption = 'VENCIMENTO'
+    FocusControl = DBEdit7
+  end
+  object Label8: TLabel [7]
+    Left = 472
+    Top = 217
+    Width = 91
+    Height = 13
+    Caption = 'DT_PAGAMENTO'
+    FocusControl = DBEdit8
+  end
+  object Label9: TLabel [8]
+    Left = 590
+    Top = 216
+    Width = 46
+    Height = 13
+    Caption = 'ATRASO'
+    FocusControl = DBEdit9
+  end
+  object Label10: TLabel [9]
+    Left = 88
+    Top = 263
+    Width = 37
+    Height = 13
+    Caption = 'JUROS'
+    FocusControl = DBEdit10
+  end
+  object Label11: TLabel [10]
+    Left = 215
+    Top = 263
+    Width = 57
+    Height = 13
+    Caption = 'VL_JUROS'
+    FocusControl = DBEdit11
+  end
+  object Label12: TLabel [11]
+    Left = 354
+    Top = 263
+    Width = 82
+    Height = 13
+    Caption = 'TOTAL_PAGAR'
+    FocusControl = DBEdit12
+  end
+  object Label13: TLabel [12]
+    Left = 472
+    Top = 263
+    Width = 44
+    Height = 13
+    Caption = 'STATUS'
+    FocusControl = DBEdit13
+  end
+  object Bevel1: TBevel [13]
+    Left = 24
+    Top = 71
+    Width = 673
+    Height = 113
+  end
+  object Bevel2: TBevel [14]
+    Left = 24
+    Top = 208
+    Width = 673
+    Height = 113
+  end
+  inherited Panel1: TPanel
+    inherited bt_Novo: TBitBtn
+      Visible = False
+    end
+    inherited bt_Pesquisar: TBitBtn
+      OnClick = bt_PesquisarClick
+    end
+  end
+  inherited Panel2: TPanel
+    inherited DBNavigator1: TDBNavigator
+      Hints.Strings = ()
+    end
+  end
+  object DBEdit1: TDBEdit [17]
+    Left = 88
+    Top = 107
+    Width = 97
+    Height = 21
+    DataField = 'ID_COMPRA'
+    DataSource = ds_padrao
+    TabOrder = 2
+  end
+  object DBEdit2: TDBEdit [18]
+    Left = 88
+    Top = 153
+    Width = 97
+    Height = 21
+    DataField = 'ID_FORNECEDOR'
+    DataSource = ds_padrao
+    TabOrder = 3
+  end
+  object DBEdit3: TDBEdit [19]
+    Left = 215
+    Top = 153
+    Width = 354
+    Height = 21
+    DataField = 'NOME'
+    DataSource = ds_padrao
+    TabOrder = 4
+  end
+  object DBEdit4: TDBEdit [20]
+    Left = 590
+    Top = 153
+    Width = 97
+    Height = 21
+    DataField = 'CNPJ'
+    DataSource = ds_padrao
+    TabOrder = 5
+  end
+  object DBEdit5: TDBEdit [21]
+    Left = 88
+    Top = 236
+    Width = 97
+    Height = 21
+    DataField = 'ID_SEQUENCIA'
+    DataSource = ds_pagar
+    TabOrder = 6
+  end
+  object DBEdit6: TDBEdit [22]
+    Left = 215
+    Top = 236
+    Width = 94
+    Height = 21
+    DataField = 'VALOR_PARCELA'
+    DataSource = ds_pagar
+    TabOrder = 7
+  end
+  object DBEdit7: TDBEdit [23]
+    Left = 354
+    Top = 236
+    Width = 88
+    Height = 21
+    DataField = 'DT_VENCIMENTO'
+    DataSource = ds_pagar
+    TabOrder = 8
+  end
+  object DBEdit8: TDBEdit [24]
+    Left = 472
+    Top = 235
+    Width = 97
+    Height = 21
+    DataField = 'DT_PAGAMENTO'
+    DataSource = ds_pagar
+    TabOrder = 9
+    OnExit = DBEdit8Exit
+  end
+  object DBEdit9: TDBEdit [25]
+    Left = 590
+    Top = 235
+    Width = 97
+    Height = 21
+    DataField = 'ATRASO'
+    DataSource = ds_pagar
+    TabOrder = 10
+  end
+  object DBEdit10: TDBEdit [26]
+    Left = 86
+    Top = 282
+    Width = 94
+    Height = 21
+    DataField = 'JUROS'
+    DataSource = ds_pagar
+    TabOrder = 11
+    OnExit = DBEdit10Exit
+  end
+  object DBEdit11: TDBEdit [27]
+    Left = 215
+    Top = 282
+    Width = 88
+    Height = 21
+    DataField = 'VL_JUROS'
+    DataSource = ds_pagar
+    TabOrder = 12
+  end
+  object DBEdit12: TDBEdit [28]
+    Left = 353
+    Top = 282
+    Width = 97
+    Height = 21
+    DataField = 'TOTAL_PAGAR'
+    DataSource = ds_pagar
+    TabOrder = 13
+  end
+  object DBEdit13: TDBEdit [29]
+    Left = 472
+    Top = 279
+    Width = 97
+    Height = 21
+    DataField = 'STATUS'
+    DataSource = ds_pagar
+    TabOrder = 14
+  end
+  inherited Q_padrao: TFDQuery
+    SQL.Strings = (
+      'SELECT A.ID_COMPRA, A.ID_FORNECEDOR, B.NOME, B.CNPJ'
+      'FROM COMPRA A '
+      'INNER JOIN FORNECEDOR B ON B.ID_FORNECEDOR = A.ID_FORNECEDOR '
+      'ORDER BY A.ID_COMPRA')
+    Left = 536
+    Top = 360
+    object Q_padraoID_COMPRA: TIntegerField
+      FieldName = 'ID_COMPRA'
+      Origin = 'ID_COMPRA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Q_padraoID_FORNECEDOR: TIntegerField
+      FieldName = 'ID_FORNECEDOR'
+      Origin = 'ID_FORNECEDOR'
+      Required = True
+    end
+    object Q_padraoNOME: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'NOME'
+      Origin = 'NOME'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 100
+    end
+    object Q_padraoCNPJ: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'CNPJ'
+      Origin = 'CNPJ'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+  end
+  inherited ds_padrao: TDataSource
+    Top = 360
+  end
+  object q_pagar: TFDQuery
+    IndexFieldNames = 'ID_COMPRA'
+    MasterSource = ds_padrao
+    MasterFields = 'ID_COMPRA'
+    DetailFields = 'ID_COMPRA'
+    Connection = DM.Conexao
+    SQL.Strings = (
+      'SELECT * FROM CONTAS_PAGAR '
+      'WHERE ID_COMPRA = :ID_COMPRA'
+      'ORDER BY ID_COMPRA')
+    Left = 56
+    Top = 360
+    ParamData = <
+      item
+        Name = 'ID_COMPRA'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+    object q_pagarID_SEQUENCIA: TIntegerField
+      FieldName = 'ID_SEQUENCIA'
+      Origin = 'ID_SEQUENCIA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object q_pagarID_COMPRA: TIntegerField
+      FieldName = 'ID_COMPRA'
+      Origin = 'ID_COMPRA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object q_pagarVALOR_PARCELA: TFMTBCDField
+      FieldName = 'VALOR_PARCELA'
+      Origin = 'VALOR_PARCELA'
+      Required = True
+      currency = True
+      Precision = 18
+      Size = 2
+    end
+    object q_pagarDT_VENCIMENTO: TDateField
+      FieldName = 'DT_VENCIMENTO'
+      Origin = 'DT_VENCIMENTO'
+      Required = True
+    end
+    object q_pagarDT_PAGAMENTO: TDateField
+      FieldName = 'DT_PAGAMENTO'
+      Origin = 'DT_PAGAMENTO'
+    end
+    object q_pagarATRASO: TIntegerField
+      FieldName = 'ATRASO'
+      Origin = 'ATRASO'
+    end
+    object q_pagarJUROS: TFMTBCDField
+      FieldName = 'JUROS'
+      Origin = 'JUROS'
+      currency = True
+      Precision = 18
+      Size = 2
+    end
+    object q_pagarVL_JUROS: TFMTBCDField
+      FieldName = 'VL_JUROS'
+      Origin = 'VL_JUROS'
+      Precision = 18
+      Size = 2
+    end
+    object q_pagarTOTAL_PAGAR: TFMTBCDField
+      FieldName = 'TOTAL_PAGAR'
+      Origin = 'TOTAL_PAGAR'
+      currency = True
+      Precision = 18
+      Size = 2
+    end
+    object q_pagarSTATUS: TStringField
+      FieldName = 'STATUS'
+      Origin = 'STATUS'
+      Size = 30
+    end
+  end
+  object ds_pagar: TDataSource
+    DataSet = q_pagar
+    Left = 144
+    Top = 360
+  end
+end

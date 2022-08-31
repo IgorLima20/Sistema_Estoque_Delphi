@@ -1,0 +1,39 @@
+unit U_DM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FBDef, FireDAC.Phys.IBBase,
+  FireDAC.Phys.FB, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet;
+
+type
+  TDM = class(TDataModule)
+    Conexao: TFDConnection;
+    Transacao: TFDTransaction;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    fdqry1: TFDQuery;
+    Ds_Login: TDataSource;
+    fdqry1ID_USUARIO: TIntegerField;
+    fdqry1NOME: TStringField;
+    fdqry1SENHA: TStringField;
+    fdqry1TIPO: TStringField;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

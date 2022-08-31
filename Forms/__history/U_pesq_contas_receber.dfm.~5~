@@ -1,0 +1,33 @@
+inherited Frm_Pesq_contas_receber: TFrm_Pesq_contas_receber
+  Caption = 'FORMULARIO DE RECEBIMENTO DE CONTAS '
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Panel1: TPanel
+    inherited lb_inicio: TLabel
+      Visible = False
+    end
+    inherited cb_chave_pesquisa: TComboBox
+      OnClick = cb_chave_pesquisaClick
+      Items.Strings = (
+        'CLIENTE'
+        'NOME'
+        'CPF')
+    end
+    inherited MK_Inicio: TMaskEdit
+      Visible = False
+    end
+    inherited MK_Fim: TMaskEdit
+      Visible = False
+    end
+  end
+  inherited Panel2: TPanel
+    inherited DBNavigator1: TDBNavigator
+      Hints.Strings = ()
+    end
+  end
+  inherited Rel_Pesq_Padrao: TfrxReport
+    Datasets = <>
+    Variables = <>
+    Style = <>
+  end
+end

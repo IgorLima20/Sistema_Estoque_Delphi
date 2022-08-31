@@ -1,0 +1,139 @@
+unit U_contas_pagar;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_padrao, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.DBCtrls, Vcl.StdCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Dateutils;
+
+type
+  TFrm_contas_pagar = class(TFrm_Padrao)
+    Label1: TLabel;
+    DBEdit1: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label3: TLabel;
+    DBEdit3: TDBEdit;
+    Label4: TLabel;
+    DBEdit4: TDBEdit;
+    Label5: TLabel;
+    DBEdit5: TDBEdit;
+    Label6: TLabel;
+    DBEdit6: TDBEdit;
+    Label7: TLabel;
+    DBEdit7: TDBEdit;
+    Label8: TLabel;
+    DBEdit8: TDBEdit;
+    Label9: TLabel;
+    DBEdit9: TDBEdit;
+    Label10: TLabel;
+    DBEdit10: TDBEdit;
+    Label11: TLabel;
+    DBEdit11: TDBEdit;
+    Label12: TLabel;
+    DBEdit12: TDBEdit;
+    Label13: TLabel;
+    DBEdit13: TDBEdit;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    q_pagar: TFDQuery;
+    ds_pagar: TDataSource;
+    q_pagarID_SEQUENCIA: TIntegerField;
+    q_pagarID_COMPRA: TIntegerField;
+    q_pagarVALOR_PARCELA: TFMTBCDField;
+    q_pagarDT_VENCIMENTO: TDateField;
+    q_pagarDT_PAGAMENTO: TDateField;
+    q_pagarATRASO: TIntegerField;
+    q_pagarJUROS: TFMTBCDField;
+    q_pagarVL_JUROS: TFMTBCDField;
+    q_pagarTOTAL_PAGAR: TFMTBCDField;
+    q_pagarSTATUS: TStringField;
+    Q_padraoID_COMPRA: TIntegerField;
+    Q_padraoID_FORNECEDOR: TIntegerField;
+    Q_padraoNOME: TStringField;
+    Q_padraoCNPJ: TStringField;
+    procedure bt_PesquisarClick(Sender: TObject);
+    procedure bt_EditarClick(Sender: TObject);
+    procedure DBEdit8Exit(Sender: TObject);
+    procedure bt_AtualizarClick(Sender: TObject);
+    procedure DBEdit10Exit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_contas_pagar: TFrm_contas_pagar;
+
+implementation
+
+{$R *.dfm}
+
+uses U_pesq_parcela_pagar, U_DM;
+
+procedure TFrm_contas_pagar.bt_AtualizarClick(Sender: TObject);
+begin
+  q_pagar.Refresh;
+  inherited;
+end;
+
+procedure TFrm_contas_pagar.bt_EditarClick(Sender: TObject);
+begin
+  inherited;
+  q_pagar.Edit;
+  DBEdit8.SetFocus;
+  Frm_pesq_parcela_pagar.Q_pesq_padrao.Close;
+end;
+
+procedure TFrm_contas_pagar.bt_PesquisarClick(Sender: TObject);
+begin
+   Frm_pesq_parcela_pagar := TFrm_pesq_parcela_pagar.Create(Self);
+  Frm_pesq_parcela_pagar.ShowModal;
+  try
+    if Frm_pesq_parcela_pagar.codigo > 0 then
+    begin
+      Q_padrao.Open;
+      q_pagar.Open;
+      Q_padrao.Locate('ID_COMPRA', Frm_pesq_parcela_pagar.codigo, []);
+      q_pagar.Locate('DT_VENCIMENTO', Frm_pesq_parcela_pagar.data, []);
+      q_pagar.Locate('ID_SEQUENCIA', Frm_pesq_parcela_pagar.sequencia, []);
+    end;
+  finally
+    Frm_pesq_parcela_pagar.Free;
+    Frm_pesq_parcela_pagar := nil;
+  end;
+end;
+
+procedure TFrm_contas_pagar.DBEdit10Exit(Sender: TObject);
+begin
+  //Valida os dias em atraso
+  if q_pagarATRASO.AsInteger > 0 then
+  begin
+    q_pagarVL_JUROS.AsFloat := (
+    q_pagarATRASO.AsInteger * q_pagarJUROS.AsFloat * q_pagarVALOR_PARCELA.AsFloat/100);
+    //Insere o valor total a pagar
+    q_pagarTOTAL_PAGAR.AsFloat := q_pagarVL_JUROS.AsFloat + q_pagarVALOR_PARCELA.AsFloat;
+    q_pagarSTATUS.AsString := 'PAGO';
+  end;
+
+end;
+
+procedure TFrm_contas_pagar.DBEdit8Exit(Sender: TObject);
+begin
+  if q_pagarDT_PAGAMENTO.AsDateTime > q_pagarDT_VENCIMENTO.AsDateTime then
+  begin
+    q_pagarATRASO.Value := Daysbetween(q_pagarDT_PAGAMENTO.AsDateTime, q_pagarDT_VENCIMENTO.AsDateTime);
+    DBEdit10.SetFocus;
+  end
+  else
+  q_pagarATRASO.AsInteger := 0;
+  q_pagarSTATUS.AsString := 'PAGO';
+  q_pagarTOTAL_PAGAR.AsFloat := q_pagarVALOR_PARCELA.AsFloat;
+end;
+
+end.

@@ -1,0 +1,64 @@
+unit U_pesq_venda_forma_pgto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_form_pesquisa_padrao, Data.DB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, frxClass, frxExportBaseDialog, frxExportPDF,
+  frxDBSet, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.DBCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ExtCtrls;
+
+type
+  TFrm_pesq_venda_forma_pgto = class(TFrm_Pesquisa_Padrao)
+    Q_pesq_padraoQTDE_VENDA: TLargeintField;
+    Q_pesq_padraoVALOR_VENDA: TFMTBCDField;
+    Q_pesq_padraoID_FORMA_PGTO: TIntegerField;
+    Q_pesq_padraoDESCRICAO: TStringField;
+    procedure bt_PesquisarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_pesq_venda_forma_pgto: TFrm_pesq_venda_forma_pgto;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrm_pesq_venda_forma_pgto.bt_PesquisarClick(Sender: TObject);
+begin
+  Q_pesq_padrao.Close;  //fecha
+  Q_pesq_padrao.SQL.Add('');   // limpa
+  Q_pesq_padrao.Params.Clear;  // limpamos os parametros
+  Q_pesq_padrao.SQL.Clear;     // limpa o sql
+  Q_pesq_padrao.SQL.Add('select count(A.id_compra)as qtde_compra,'
+  + 'sum(A.valor)as valor_compra,'
+  + 'A.id_forma_pgto,b.descricao '
+  + 'from compra A ');
+  Q_pesq_padrao.SQL.Add('inner join FORMA_PGTO b on b.ID_FORMA_PGTO=a.ID_FORMA_PGTO ');
+  Q_pesq_padrao.SQL.Add('where A.cadastro between :PDATA_INI and :PDATA_FIM ');
+  Q_pesq_padrao.ParamByName('PDATA_INI').AsDate := StrToDate(MK_Inicio.Text);
+  Q_pesq_padrao.ParamByName('PDATA_FIM').AsDate := StrToDate(MK_Fim.Text);
+  Q_pesq_padrao.SQL.Add('group by A.id_forma_pgto,b.DESCRICAO ');
+  Q_pesq_padrao.SQL.Add('order by A.id_forma_pgto, b.DESCRICAO ');
+  Q_pesq_padrao.Open;
+
+  // Mostra quantidade de registros
+  lb_resultado.Caption := IntToStr(Q_pesq_padrao.RecordCount);
+
+  // chama a procedure SomaCompra
+  SomaCompra;
+
+  if Q_pesq_padrao.IsEmpty then
+  begin
+    Application.MessageBox('Nenhum registro foi encontrado!!', 'Atenção', MB_OK+MB_ICONINFORMATION);
+  end;
+end;
+
+end.
